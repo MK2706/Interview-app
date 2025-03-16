@@ -11,13 +11,16 @@ def install_package(package):
     try:
         __import__(package)
     except ImportError:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+        print(f"Installing {package}...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "--no-cache-dir", package])
+        print(f"{package} installed successfully!")
         __import__(package)  # Import again after installation
 
 # Install required packages
 install_package("bcrypt")
-install_package("pyomo")
-install_package("genai")
+install_package("pymongo")
+install_package("google-generativeai")
+
 
 
 import streamlit as st
