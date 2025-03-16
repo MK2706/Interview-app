@@ -3,6 +3,15 @@
 
 # In[ ]:
 pip install -r requirements.txt
+import subprocess
+import sys
+
+try:
+    import pymongo
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "pymongo"])
+    import pymongo  # Import again after installation
+
 
 import streamlit as st
 from database import connect_to_mongodb, hash_password, verify_password
