@@ -3,19 +3,6 @@
 
 # In[ ]:
 
-import subprocess
-import sys
-
-try:
-    import pymongo
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "pymongo"])
-    import pymongo  # Import again after installation
-try:
-    import pymongo
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "bcrypt"])
-    import bcrypt  # Import again after installation
 
 
 import streamlit as st
