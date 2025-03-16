@@ -6,20 +6,16 @@
 import subprocess
 import sys
 
-# Function to install missing packages
-def install_package(package):
+def install_package(package, version=None):
     try:
         __import__(package)
     except ImportError:
-        print(f"Installing {package}...")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "--no-cache-dir", package])
-        print(f"{package} installed successfully!")
-        __import__(package)  # Import again after installation
+        pkg = f"{package}=={version}" if version else package
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "--no-cache-dir", pkg])
 
-# Install required packages
-install_package("bcrypt")
-install_package("pymongo")
-install_package("google-generativeai")
+install_package("bcrypt", "4.0.1")  # Try a specific version
+install_package("pyomo")
+install_package("genai")
 
 
 
