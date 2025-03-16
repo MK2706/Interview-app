@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
 import streamlit as st
 from database import connect_to_mongodb
 from gemini import generate_question, evaluate_response
@@ -47,7 +41,10 @@ def candidate_portal(db, model):
 
             # User response
             response_key = f"response_{st.session_state.current_question_index}"  # Unique key for each question
-            response = st.text_input("Your Answer", key=response_key)
+            if response_key not in st.session_state:
+                st.session_state[response_key] = ""  # Initialize the response key if it doesn't exist
+
+            response = st.text_input("Your Answer", key=response_key, value=st.session_state[response_key])
 
             # Navigation buttons
             col1, col2, col3 = st.columns([1, 1, 1])
@@ -63,9 +60,6 @@ def candidate_portal(db, model):
                             st.session_state.user_responses.append(response)
                             st.session_state.feedback.append(feedback)
                             st.session_state.current_question_index += 1
-                            # Clear the previous response only if it exists
-                            if st.session_state.current_question_index > 0:
-                                st.session_state[f"response_{st.session_state.current_question_index - 1}"] = ""
                             st.rerun()
                     else:
                         st.error("Please provide an answer before proceeding.")
@@ -101,4 +95,3 @@ def candidate_portal(db, model):
             # Display feedback if available
             if st.session_state.current_question_index < len(st.session_state.feedback):
                 st.markdown(f'<div class="chat-message bot"><h3>Feedback:</h3><p>{st.session_state.feedback[st.session_state.current_question_index]}</p></div>', unsafe_allow_html=True)
-
