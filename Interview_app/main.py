@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # In[ ]:
-pip install -r requirements.txt
+
 import subprocess
 import sys
 
