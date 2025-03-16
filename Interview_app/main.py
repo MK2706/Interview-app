@@ -6,11 +6,18 @@
 import subprocess
 import sys
 
-try:
-    import pymongo
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "pymongo"])
-    import pymongo  # Import again after installation
+# Function to install missing packages
+def install_package(package):
+    try:
+        __import__(package)
+    except ImportError:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+        __import__(package)  # Import again after installation
+
+# Install required packages
+install_package("bcrypt")
+install_package("pyomo")
+install_package("genai")
 
 
 import streamlit as st
