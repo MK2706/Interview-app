@@ -1,15 +1,13 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
 import streamlit as st
 import pandas as pd
 from database import connect_to_mongodb
 
 def admin_portal(db):
     st.markdown('<h2 class="section-header">Admin Portal</h2>', unsafe_allow_html=True)
+
+    # Fetch job roles from the database
+    job_roles_collection = db.job_roles  # Use a separate collection for job roles
+    job_roles = [role["name"] for role in job_roles_collection.find()]  # Fetch all job roles
 
     # Sidebar to display added questions
     st.sidebar.markdown('<h3 class="section-header">Added Questions</h3>', unsafe_allow_html=True)
@@ -33,13 +31,29 @@ def admin_portal(db):
 
     # Manage Job Roles
     st.markdown('<h3 class="section-header">Manage Job Roles</h3>', unsafe_allow_html=True)
+    
+    # Add Job Role
     new_job_role = st.text_input("Add a new job role")
     if st.button("Add Job Role"):
-        if new_job_role and new_job_role not in st.session_state.job_roles:
-            st.session_state.job_roles.append(new_job_role)
+        if new_job_role and new_job_role not in job_roles:
+            job_roles_collection.insert_one({"name": new_job_role})  # Add new job role to the database
             st.success(f"Job role '{new_job_role}' added successfully!")
+            st.rerun()  # Refresh to update the job roles list
         else:
             st.error("Job role already exists or is invalid.")
+
+    # Delete Job Role
+    delete_job_role = st.selectbox("Select a job role to delete", job_roles)
+    if st.button("Delete Job Role"):
+        if delete_job_role:
+            # Delete the job role from the database
+            job_roles_collection.delete_one({"name": delete_job_role})
+            # Delete all questions associated with the deleted job role
+            db.questions.delete_many({"job_role": delete_job_role})
+            st.success(f"Job role '{delete_job_role}' and associated questions deleted successfully!")
+            st.rerun()  # Refresh to update the job roles list
+        else:
+            st.error("No job role selected.")
 
     # Set Number of Questions
     st.markdown('<h3 class="section-header">Set Number of Questions</h3>', unsafe_allow_html=True)
@@ -51,7 +65,7 @@ def admin_portal(db):
     
     if admin_option == "Add Question":
         new_question = st.text_input("Enter a new question")
-        new_role = st.selectbox("Select Job Role for New Question", st.session_state.job_roles)
+        new_role = st.selectbox("Select Job Role for New Question", job_roles)
         if st.button("Add Question"):
             db.questions.insert_one({"job_role": new_role, "question": new_question})
             st.success("Question added successfully!")
@@ -100,4 +114,3 @@ def admin_portal(db):
         st.download_button("Download as CSV", csv, "candidate_records.csv", "text/csv")
     else:
         st.warning("No candidate records found.")
-
