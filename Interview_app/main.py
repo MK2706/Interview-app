@@ -2,8 +2,7 @@
 # coding: utf-8
 
 # In[ ]:
-!pip install pymongo
-!pip install google-generativeai
+pip install -r requirements.txt
 
 import streamlit as st
 from database import connect_to_mongodb, hash_password, verify_password
