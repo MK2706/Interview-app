@@ -13,8 +13,8 @@ import bcrypt
 # MongoDB connection
 def connect_to_mongodb():
     try:
-        username = os.getenv("MONGODB_USERNAME", "manojmn2703")
-        password = os.getenv("MONGODB_PASSWORD", "1Kumar@26")  # Use environment variables for security
+        username = os.getenv("MONGODB_USERNAME", "MONGODB_USERNAME")
+        password = os.getenv("MONGODB_PASSWORD", "MONGODB_PASSWORD")  # Use environment variables for security
         encoded_username = quote_plus(username)
         encoded_password = quote_plus(password)
         connection_string = f"mongodb+srv://{encoded_username}:{encoded_password}@cluster0.oou3r.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
