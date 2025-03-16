@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # In[ ]:
-
+pip install --upgrade pymongo
 
 import streamlit as st
 from database import connect_to_mongodb, hash_password, verify_password
@@ -20,8 +20,16 @@ model = initialize_gemini()
 # Connect to MongoDB
 db = connect_to_mongodb()
 
-# Main app logic
 def main():
+    # Apply custom CSS
+    st.markdown(custom_css, unsafe_allow_html=True)
+
+    # Initialize Gemini model
+    model = initialize_gemini()
+
+    # Connect to MongoDB
+    db = connect_to_mongodb()
+
     if db is None:
         st.error("Failed to connect to MongoDB. Please check your connection settings.")
         return
@@ -48,9 +56,14 @@ def main():
     if "questions" not in st.session_state:
         st.session_state.questions = []
     if "job_roles" not in st.session_state:
-        st.session_state.job_roles = ["Software Engineer", "Data Scientist"]
+        # Initialize job_roles as an empty list
+        st.session_state.job_roles = []
     if "num_questions" not in st.session_state:
         st.session_state.num_questions = 5  # Default number of questions
+
+    # Fetch job roles from the database
+    job_roles_collection = db.job_roles  # Use the job_roles collection
+    st.session_state.job_roles = [role["name"] for role in job_roles_collection.find()]
 
     # Login and Signup Section
     if not st.session_state.logged_in:
@@ -124,7 +137,10 @@ def main():
             admin_portal(db)
         # Candidate Portal
         else:
-            candidate_portal(db, model)
+            if not st.session_state.job_roles:
+                st.warning("No job roles available. Please contact the admin to add job roles.")
+            else:
+                candidate_portal(db, model)
 
 # Run the app
 if __name__ == "__main__":
