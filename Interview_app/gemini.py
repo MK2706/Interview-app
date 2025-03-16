@@ -9,7 +9,7 @@ import os
 
 # Initialize Gemini API
 def initialize_gemini():
-    gemini_api_key = os.getenv("GEMINI_API_KEY", "AIzaSyA6ZZwDVodpBt8BAqd-mzBE7IviRxQwugI")
+    gemini_api_key = os.getenv("GEMINI_API_KEY", "your_API_here")
     genai.configure(api_key=gemini_api_key)
     return genai.GenerativeModel('gemini-1.5-flash')
 
