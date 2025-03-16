@@ -6,16 +6,11 @@
 import subprocess
 import sys
 
-def install_package(package, version=None):
-    try:
-        __import__(package)
-    except ImportError:
-        pkg = f"{package}=={version}" if version else package
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "--no-cache-dir", pkg])
-
-install_package("bcrypt", "4.0.1")  # Try a specific version
-install_package("pyomo")
-install_package("genai")
+try:
+    import pymongo
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "pymongo"])
+    import pymongo  # Import again after installation
 
 
 
